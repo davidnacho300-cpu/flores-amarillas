@@ -129,6 +129,61 @@
         opacity: 0;
       }
     }
+
+    audio {
+      margin-top: 40px;
+      filter: drop-shadow(0 0 5px #ffd700);
+    }
+
+    .carrusel-3d {
+      margin: 60px auto;
+      width: 400px;
+      height: 250px;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: girar 20s linear infinite;
+    }
+
+    .carrusel-3d:hover {
+      animation-play-state: paused;
+    }
+
+    .item {
+      position: absolute;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+    }
+
+    .item img {
+      width: 260px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    }
+
+    .frase {
+      position: absolute;
+      bottom: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.6);
+      color: #ffd700;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 1em;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+    }
+
+    .item:hover .frase {
+      opacity: 1;
+    }
+
+    @keyframes girar {
+      from { transform: rotateY(0deg); }
+      to   { transform: rotateY(360deg); }
+    }
+  </style>
 </head>
 <body>
 
@@ -169,61 +224,58 @@
       <div class="item"><img src="img10.jpeg"><div class="frase">Este detalle es para ti 💌</div></div>
     </div>
     <script>
-      window.onload = function() {
-        function iniciarSecuencia() {
-          document.getElementById('cartaInicial').classList.add('ocultar');
-          document.getElementById('contenido').classList.remove('ocultar');
-          mostrarCarta();
-        }
+      function iniciarSecuencia() {
+        document.getElementById('cartaInicial').classList.add('ocultar');
+        document.getElementById('contenido').classList.remove('ocultar');
+        mostrarCarta();
+      }
 
-        window.iniciarSecuencia = iniciarSecuencia;
+      window.iniciarSecuencia = iniciarSecuencia;
 
-        function mostrarCarta() {
-          const contenedor = document.getElementById('contenedor');
-          const carta = document.getElementById('carta');
-          const mariposas = document.getElementById('mariposas');
-          const carrusel = document.getElementById('carrusel');
+      function mostrarCarta() {
+        const contenedor = document.getElementById('contenedor');
+        const carta = document.getElementById('carta');
+        const mariposas = document.getElementById('mariposas');
+        const carrusel = document.getElementById('carrusel');
 
-          contenedor.classList.add('ocultar-ramo');
-          contenedor.classList.add('mostrar-carta');
-          carrusel.style.display = 'none';
+        contenedor.classList.add('ocultar-ramo');
+        contenedor.classList.add('mostrar-carta');
+        carrusel.style.display = 'none';
+
+        setTimeout(() => {
+          carta.style.opacity = 0;
+
+          for (let i = 0; i < 12; i++) {
+            const span = document.createElement('span');
+            span.textContent = '🦋';
+            span.style.left = `${Math.random() * 200 - 100}px`;
+            span.style.setProperty('--x', Math.random());
+            span.style.animationDelay = `${i * 0.2}s`;
+            mariposas.appendChild(span);
+          }
 
           setTimeout(() => {
+            mariposas.innerHTML = '';
+            contenedor.classList.remove('mostrar-carta');
+            contenedor.classList.remove('ocultar-ramo');
             carta.style.opacity = 0;
+            carrusel.style.display = 'block';
+          }, 4000);
 
-            for (let i = 0; i < 12; i++) {
-              const span = document.createElement('span');
-              span.textContent = '🦋';
-              span.style.left = `${Math.random() * 200 - 100}px`;
-              span.style.setProperty('--x', Math.random());
-              span.style.animationDelay = `${i * 0.2}s`;
-              mariposas.appendChild(span);
-            }
+        }, 20000);
 
-            setTimeout(() => {
-              mariposas.innerHTML = '';
-              contenedor.classList.remove('mostrar-carta');
-              contenedor.classList.remove('ocultar-ramo');
-              carta.style.opacity = 0;
-              carrusel.style.display = 'block';
-            }, 4000);
+        const items = carrusel.querySelectorAll('.item');
+        const total = items.length;
+        const angulo = 360 / total;
+        const imagenAncho = 260;
+        const espacioEntre = 20;
+        const radio = Math.round((imagenAncho + espacioEntre) / (2 * Math.tan(Math.PI / total)));
 
-          }, 20000);
-
-          // Distribuir imágenes en cilindro 3D real
-          const items = carrusel.querySelectorAll('.item');
-          const total = items.length;
-          const angulo = 360 / total;
-          const imagenAncho = 260;
-          const espacioEntre = 20;
-          const radio = Math.round((imagenAncho + espacioEntre) / (2 * Math.tan(Math.PI / total)));
-
-          items.forEach((item, i) => {
-            const rotacion = i * angulo;
-            item.style.transform = `rotateY(${rotacion}deg) translateZ(${radio}px)`;
-          });
-        }
-      };
+        items.forEach((item, i) => {
+          const rotacion = i * angulo;
+          item.style.transform = `rotateY(${rotacion}deg) translateZ(${radio}px)`;
+        });
+      }
     </script>
   </body>
 </html>
